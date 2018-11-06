@@ -15,7 +15,7 @@ function loadSourceFile(p: Path): ts.SourceFile {
 
 // return true if changed
 function translate(f: ts.SourceFile): string {
-  let updated = '';
+  let updated = f.text;
   let sourceOffset = 0;
   function travel(n: ts.Node) {
     if (ts.isImportDeclaration(n)) {
@@ -30,7 +30,7 @@ function translate(f: ts.SourceFile): string {
           }
         }
         let updatedCode = '\n' + newImports.join('\n');
-        updated = removeAt(f.text, n.pos + sourceOffset, n.end - n.pos);
+        updated = removeAt(updated, n.pos + sourceOffset, n.end - n.pos);
         updated = insertAt(updated, n.pos + sourceOffset, updatedCode);
         sourceOffset += updatedCode.length - (n.end - n.pos);
       }
@@ -38,7 +38,10 @@ function translate(f: ts.SourceFile): string {
   }
 
   ts.forEachChild(f, travel);
-  return updated;
+  if (updated !== f.text) {
+    return updated;
+  }
+  return '';
 }
 
 function dumpNode(n: ts.Node, f: ts.SourceFile) {
