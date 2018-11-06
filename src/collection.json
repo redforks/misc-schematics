@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
     "lodash": {
-      "description": "A blank schematic.",
+      "description": "Convert lodash to function import",
       "factory": "./lodash/index#lodash"
     }
   }

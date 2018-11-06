@@ -7,6 +7,7 @@ This repository is a basic Schematic implementation that serves as a starting po
 To test locally, install `@angular-devkit/schematics-cli` globally and use the `schematics` command line tool. That tool acts the same as the `generate` command of the Angular CLI, but also has a debug mode.
 
 Check the documentation with
+
 ```bash
 schematics --help
 ```
@@ -25,4 +26,20 @@ npm publish
 ```
 
 That's it!
- 
+
+### Lodash
+
+Convert lodash import to function level import:
+
+```typescript
+import { map, stubTrue } from "lodash";
+```
+
+Convert to:
+
+```typescript
+import map = require("lodash/map");
+import stubTrue = require("lodash/stubTrue");
+```
+
+Shrinks built .js bundle size.
