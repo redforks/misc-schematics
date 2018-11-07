@@ -24,13 +24,11 @@ function translate(f: ts.SourceFile): string {
         if (n.importClause && n.importClause.namedBindings && ts.isNamedImports(n.importClause.namedBindings)) {
           let namedBindings = n.importClause.namedBindings;
           for (const binding of namedBindings.elements) {
-            // let detailImport = ts.createImportEqualsDeclaration(
-            //   undefined, undefined, ts.createIdentifier(binding.name.text), ts.createExternalModuleReference(ts.createStringLiteral(n.moduleSpecifier.text + '/' + binding.name.text)));
             let detailImport = ts.createImportDeclaration(undefined, undefined,
               ts.createImportClause(
-                undefined, ts.createNamedImports([
-                  ts.createImportSpecifier(undefined, ts.createIdentifier(binding.name.text))
-                ])),
+                ts.createIdentifier(binding.name.text),
+                undefined,
+              ),
               ts.createStringLiteral('lodash/' + binding.name.text));
             newImports.push(dumpNode(detailImport, f).replace(/"/g, "'"));
           }
