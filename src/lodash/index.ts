@@ -61,7 +61,18 @@ export function lodash(_options: any): Rule {
           tree.overwrite(v, translated);
         }
       }
-    })
+    });
+
+    let tsConfig = JSON.parse(readFileSync('tsconfig.json').toString());
+    if (!tsConfig.compilerOptions) {
+      tsConfig.compilerOptions = {};
+    }
+    if (!tsConfig.compilerOptions.allowSyntheticDefaultImports) {
+      tsConfig.compilerOptions.allowSyntheticDefaultImports = true;
+
+      tree.overwrite('/tsconfig.json', JSON.stringify(tsConfig, undefined, 2));
+    }
+
     return tree;
   };
 }
