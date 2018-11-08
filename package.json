@@ -1,7 +1,7 @@
 {
-  "name": "lodash-schematics",
-  "version": "0.2.2",
-  "description": "A blank schematics",
+  "name": "lodash-to-method-module",
+  "version": "0.1.0",
+  "description": "Convert .ts lodash imports to module level",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && jasmine src/**/*_spec.js"
@@ -13,12 +13,13 @@
   "license": "MIT",
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "^7.0.4",
-    "@angular-devkit/schematics": "^7.0.4",
-    "@types/jasmine": "^2.6.0",
-    "@types/node": "^8.0.31",
-    "jasmine": "^2.8.0",
-    "tsmisc": "^1.7.1",
-    "typescript": "^2.5.2"
+    "tsmisc": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.3",
+    "typescript": ">= 3.0.0"
+  },
+  "peerDependencies": {
+    "typescript": ">= 2.5.0"
   }
 }

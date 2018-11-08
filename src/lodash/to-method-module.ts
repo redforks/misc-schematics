@@ -1,20 +1,14 @@
-import { Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
 import * as ts from 'typescript';
-import { Path } from '@angular-devkit/core';
-import { readFileSync } from 'fs';
-import { removeAt, insertAt } from "tsmisc";
+import { removeAt, insertAt } from 'tsmisc';
 
-function loadSourceFile(p: Path): ts.SourceFile {
-  return ts.createSourceFile(
-    p,
-    readFileSync(p.substr(1)).toString(),
+export function toLodashMethodModule(content: string, path: string): string {
+  let f = ts.createSourceFile(
+    path,
+    content,
     ts.ScriptTarget.Latest,
     /*setParentNodes */ true,
   );
-}
 
-// return true if changed
-function translate(f: ts.SourceFile): string {
   let updated = f.text;
   let sourceOffset = 0;
   function travel(n: ts.Node) {
@@ -52,35 +46,19 @@ function translate(f: ts.SourceFile): string {
 function dumpNode(n: ts.Node, f: ts.SourceFile) {
   const printer = ts.createPrinter({
     newLine: ts.NewLineKind.LineFeed,
-
   });
   return printer.printNode(ts.EmitHint.Unspecified, n, f)
 }
 
-// You don't have to export the function as default. You can also have more than one rule factory
-// per file.
-export function lodash(_options: any): Rule {
-  return (tree: Tree, _context: SchematicContext) => {
-    tree.getDir('/src').visit(v => {
-      if (v.endsWith('.ts')) {
-        let f = loadSourceFile(v);
-        let translated = translate(f);
-        if (translated) {
-          tree.overwrite(v, translated);
-        }
-      }
-    });
+export function updateTsConfig(content: string) {
+  let tsConfig = JSON.parse(content);
+  if (!tsConfig.compilerOptions) {
+    tsConfig.compilerOptions = {};
+  }
+  if (!tsConfig.compilerOptions.allowSyntheticDefaultImports) {
+    tsConfig.compilerOptions.allowSyntheticDefaultImports = true;
 
-    let tsConfig = JSON.parse(readFileSync('tsconfig.json').toString());
-    if (!tsConfig.compilerOptions) {
-      tsConfig.compilerOptions = {};
-    }
-    if (!tsConfig.compilerOptions.allowSyntheticDefaultImports) {
-      tsConfig.compilerOptions.allowSyntheticDefaultImports = true;
-
-      tree.overwrite('/tsconfig.json', JSON.stringify(tsConfig, undefined, 2));
-    }
-
-    return tree;
-  };
+    return JSON.stringify(tsConfig, undefined, 2);
+  }
+  return content;
 }
