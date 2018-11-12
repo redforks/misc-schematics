@@ -18,13 +18,8 @@ export function toLodashMethodModule(content: string, path: string): string {
         if (n.importClause && n.importClause.namedBindings && ts.isNamedImports(n.importClause.namedBindings)) {
           let namedBindings = n.importClause.namedBindings;
           for (const binding of namedBindings.elements) {
-            let isFp = binding.name.text.startsWith('stub');
-            let detailImport = ts.createImportDeclaration(undefined, undefined,
-              ts.createImportClause(
-                ts.createIdentifier(binding.name.text),
-                undefined,
-              ),
-              ts.createStringLiteral((isFp ? 'lodash/fp/' : 'lodash/') + binding.name.text));
+            let detailImport = ts.createImportEqualsDeclaration(
+              undefined, undefined, ts.createIdentifier(binding.name.text), ts.createExternalModuleReference(ts.createStringLiteral(n.moduleSpecifier.text + '/' + binding.name.text)));
             newImports.push(dumpNode(detailImport, f).replace(/"/g, "'"));
           }
         }
@@ -37,10 +32,7 @@ export function toLodashMethodModule(content: string, path: string): string {
   }
 
   ts.forEachChild(f, travel);
-  if (updated !== f.text) {
-    return updated;
-  }
-  return '';
+  return updated;
 }
 
 function dumpNode(n: ts.Node, f: ts.SourceFile) {
